@@ -1,0 +1,3 @@
+nvm_root: /usr/local/nvm
+nvm_version: 0.39.3
+nodejs_version: v15.14.0

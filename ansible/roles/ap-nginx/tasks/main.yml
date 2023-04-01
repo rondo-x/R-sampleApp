@@ -1,0 +1,45 @@
+---
+  - name: check nginx install
+    shell: bash -lc "nginx -v"
+    register: nginx_exists
+    changed_when: False
+    ignore_errors: True
+
+  - name: install nginx
+    become: yes
+    apt:
+      name: nginx
+      state: latest
+    when: nginx_exists is failed
+
+  - name: Set development.rb
+    template: 
+      src: "roles/ap-nginx/templates/development.rb.j2"
+      dest: "/home/ubuntu/raisetech-app/config/environments/development.rb"
+
+
+  - name: Set nginx.conf
+    template: 
+      src: "roles/ap-nginx/templates/nginx.conf.j2"
+      dest: "/etc/nginx/nginx.conf"
+
+    
+  - name: Set nginx.conf
+    template: 
+      src: "roles/ap-nginx/templates/raisetech-app.j2"
+      dest: "/etc/nginx/sites-available/raisetech-app"
+
+
+  - name: create symblic link for app
+    become: yes
+    file:
+      src: "/etc/nginx/sites-available/raisetech-app"
+      dest: "/etc/nginx/sites-enabled/raisetech-app"
+      state: link
+
+
+  - name: delete symbolic link for default
+    become: yes
+    file:
+      path: "/etc/nginx/sites-enabled/default"
+      state: absent

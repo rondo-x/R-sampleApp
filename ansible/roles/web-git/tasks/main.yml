@@ -1,0 +1,35 @@
+---
+  - name: Upgrade all packages
+    yum:
+      name: '*'
+      state: latest
+
+  - name: Install a list of packages
+    yum:
+      name: "{{ yum_packages }}"
+    vars:
+      yum_packages:
+        - gcc
+        - curl-devel
+        - expat-devel
+        - gettext-devel
+        - openssl-devel
+        - perl-ExtUtils-MakeMaker
+        - wget
+        - zlib-devel
+        - cpan
+      state: latest
+
+  - name: check nginx install
+    shell: bash -lc "git -v"
+    register: git_exists
+    changed_when: False
+    ignore_errors: True
+
+
+  - name: install git
+    become: yes
+    yum:
+      name: git
+      state: latest
+    when: git_exists is failed

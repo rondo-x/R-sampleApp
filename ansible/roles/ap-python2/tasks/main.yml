@@ -1,0 +1,14 @@
+---
+  # python2
+  - name: check python2 version
+    shell: bash -lc "python2 --version"
+    register: python2_check_install
+    changed_when: False
+    ignore_errors: True
+  
+  - name: Install python2
+    become: yes
+    apt:
+      name: python2
+      state: latest
+    when: python2_check_install is failed  

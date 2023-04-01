@@ -1,0 +1,72 @@
+---
+  #参考: https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-20-04-ja
+  #参考: https://qiita.com/kanagi/items/8b55c7c3b43777590993
+
+
+  # NVM 
+  - name: check nvm install
+    shell: bash -lc "nvm --version"
+    register: nvm_exists
+    changed_when: False
+    ignore_errors: True
+
+  - name: clone (or fetch) nvm repository
+    git:
+      repo: "https://github.com/nvm-sh/nvm.git"
+      dest: "{{ nvm_root }}"
+    when: nvm_exists is failed
+
+#ログインシェル用 
+  - name: set profile
+    template:
+      src: "roles/ap-nodejs/templates/nvm.sh.j2"
+      dest: "/etc/profile.d/nvm.sh"
+      owner: ubuntu
+      group: ubuntu
+      mode: 0755
+    when: nvm_exists is failed
+
+
+  - name: source profile
+    become: yes
+    shell: bash -lc "source /etc/profile.d/nvm.sh"    
+
+
+  # Node.js
+  - name: check nodejs install
+    shell: bash -lc "node -v"
+    register: nodejs_exists
+    changed_when: False
+    ignore_errors: True
+
+  - name: Install {{ nodejs_version }}
+    become: yes
+    shell: bash -lc "nvm install {{ nodejs_version }}"
+    register: nvm_install_result
+    changed_when: "'is already installed.' not in nvm_install_result.stdout"
+
+
+  - name: Check if {{ nvm_version }} is the default node version
+    shell: bash -lc "nvm ls | grep -e 'default -> {{ nodejs_version }}'"
+    register: nvm_check_default
+    changed_when: False
+    ignore_errors: True
+
+
+  - name: Set default node version to {{ nodejs_version }}
+    become: yes
+    shell: bash -lc "nvm alias default {{ nodejs_version }}"
+    when: nvm_check_default is failed
+
+
+#  - name: "check nodejs {{ nodejs_version }} is installed"
+#    command: "bash -lc 'nvm ls --no-colors --no-alias'"
+#    check_mode: no
+#    ignore_errors: yes
+#    register: installed_nodejs_versions
+  
+
+#  - name: "install nodejs {{ nodejs_version }}"
+#    command: "bash -lc 'nvm install {{ nodejs_version }}'"
+#    when: nodejs_version not in installed_nodejs_versions.stdout
+

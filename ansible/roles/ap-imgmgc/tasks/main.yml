@@ -1,0 +1,14 @@
+---
+  # ImageMagic
+  - name: check ImageMagic version
+    shell: bash -lc "convert -v"
+    register: imagemagic_check_install
+    changed_when: False
+    ignore_errors: True
+  
+  - name: Install ImageMagic
+    become: yes
+    apt:
+      name: imagemagick
+      state: latest
+    when: imagemagic_check_install is failed  

@@ -1,0 +1,39 @@
+---
+# Initialize (Ubuntu)
+  - name: apt update
+    apt:
+      state: latest
+      update_cache: yes
+
+  - name: apt upgrade
+    become: yes
+    apt:
+      upgrade: yes
+
+# setting sample app
+#  - name: create directory for app 
+#    file:
+#      path: "{{ app_path }}"
+#      state: directory
+#      owner: ubuntu
+#      group: ubuntu
+#      mode: 0755
+
+  - name: set app
+    git:
+      repo: "{{ app_dl_url }}"
+      dest: "{{ app_path }}"
+
+#この記述では権限変更できなかったため削除 
+#  - name: change owner for app 
+#    file:
+#      path: "{{ app_path }}"
+#      state: directory
+#      owner: ubuntu
+#      group: ubuntu
+
+  - name: chang owner for app
+    become: yes
+    shell: bash -lc "sudo chown -R ubuntu:ubuntu {{ app_path }}"
+    
+

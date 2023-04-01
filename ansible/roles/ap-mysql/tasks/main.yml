@@ -1,0 +1,51 @@
+---
+# MySQL
+  - name: check mysql install
+    command: "mysql --version"
+    register: mysql_exists
+    changed_when: False
+    ignore_errors: True
+
+  - name: regist mysql package
+    become: yes
+    command: 
+      bash -lc "wget -O mysql8.deb {{ mysql_dl_url }}"
+      bash -lc "dpkg -i mysql8.deb"
+    when: mysql_exists is failed
+    
+  - name: apt update
+    apt:
+      state: latest
+      update_cache: yes
+
+  - name: Install MySQL
+    become: yes
+    apt:
+       name: mysql-server
+       state: latest
+    when: mysql_exists is failed
+    
+  - name: Install package with MySQL
+    apt: 
+      name: "{{ mysql_packages }}"
+    vars: 
+      mysql_packages:
+        - libmysqlclient-dev
+        - libsqlite3-dev
+        - sqlite3
+    when: mysql_exists is failed
+
+
+  # アプリのconfig/database.ymlの更新 
+  - name: Set App-DB config
+    template: 
+      src: roles/ap-mysql/templates/database.yml.j2
+      dest: "{{ app_path }}/config/database.yml"
+
+
+  # アプリのconfig/puma.rbの更新
+  - name: Set PUMA config
+    template: 
+      src: roles/ap-mysql/templates/puma.rb.j2
+      dest: "{{ app_path }}/config/puma.rb"
+

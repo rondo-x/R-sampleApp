@@ -1,0 +1,22 @@
+---
+- hosts: web-svr
+  become: yes
+  roles:
+    - { role: web-git, tags: web-git }
+    - { role: web-nginx, tags: web-nginx }
+
+- hosts: ap-svr
+  become: yes
+  roles:
+    - { role: ap-git, tags: ap-git }
+    - { role: ap-init, tags: ap-init }
+    - { role: ap-ruby, tags: ap-ruby }
+    - { role: ap-mysql, tags: ap-mysql }
+    - { role: ap-nodejs, tags: ap-nodejs }
+    - { role: ap-yarn, tags: ap-yarn }
+    - { role: ap-imgmgc, tags: ap-imgmgc }
+    - { role: ap-python2, tags: ap-python2 }
+    - { role: ap-conf, tags: ap-conf }
+    - { role: ap-unicorn, tags: ap-unicorn }
+    - { role: ap-nginx, tags: ap-nginx }
+    - { role: ap-exec, tags: ap-exec }

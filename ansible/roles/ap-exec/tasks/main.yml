@@ -1,0 +1,20 @@
+---
+  - name: chang owner for app
+    become: yes
+    shell: bash -lc "sudo chown -R ubuntu:ubuntu /home/ubuntu/raisetech-app"
+
+  - name: chang owner for nginx
+    become: yes
+    shell: bash -lc "sudo chown -R ubuntu:ubuntu /etc/nginx"
+
+  - name: Start unicorn
+    become: no
+    shell: bash -lc "rails unicorn:start"
+    args:
+      chdir: /home/ubuntu/raisetech-app
+
+  - name: restart nginx
+    service:
+      name: nginx
+      state: restarted
+

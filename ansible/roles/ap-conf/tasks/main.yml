@@ -1,0 +1,62 @@
+---
+  - name: install package(javascript) 
+    become: yes
+    shell: bash -lc "yarn"
+    args:
+      chdir: /home/ubuntu/raisetech-app
+
+  - name: bundler
+    shell: bash -lc "bundler"
+    args:
+      chdir: /home/ubuntu/raisetech-app
+
+#ap-initで対応 
+#  - name: setting directory log
+#    shell: bash -lc "sudo chown -R ubuntu:ubuntu /home/ubuntu/raisetech-app/db/"
+
+  - name: Create DB
+    become: yes
+    shell: bash -lc "rails db:create"
+    args:
+      chdir: /home/ubuntu/raisetech-app
+
+  - name: Migrate DB 
+    become: yes
+    shell: bash -lc "rails db:migrate"
+    args:
+      chdir: /home/ubuntu/raisetech-app
+
+  - name: setting application
+    shell: bash -lc "bin/setup"
+    args:
+      chdir: /home/ubuntu/raisetech-app
+
+
+  - name: setting webpack
+    shell: bash -lc "yarn webpack --config ./config/webpack/webpack.config.js"
+    args:
+      chdir: /home/ubuntu/raisetech-app
+
+
+
+# bin/dev内で実行 
+#  - name: install foreman
+#    gem:
+#      name: "foreman"
+#      executable: "/usr/local/rbenv/shims/gem"
+#      user_install: no
+
+
+
+# Gemfileに記載なしのため不要 
+#  - name: webpacker install
+#    become: yes
+#    shell: bash -lc "bundle exec rails webpacker:install"
+#    args:
+#      chdir: /home/ubuntu/raisetech-app
+
+#  - name: webpacker compile
+#    become: yes
+#    shell: bash -lc "rails webpacker:compile"
+#    args:
+#      chdir: /home/ubuntu/raisetech-app

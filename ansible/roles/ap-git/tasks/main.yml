@@ -1,0 +1,5 @@
+---
+- name: Install git (Ubuntu)
+  apt:
+    name: git
+    state: latest

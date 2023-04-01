@@ -1,0 +1,44 @@
+---
+  - name: check unicorn install
+    shell: bash -lc "unicorn -v"
+    register: unicorn_exists
+    changed_when: False
+    ignore_errors: True
+
+  - name: install unicorn
+    gem:
+      name: "unicorn"
+      version: "{{ unicorn_version }}"
+      executable: "{{ unicorn_path }}/shims/gem"
+      user_install: no
+    when: unicorn_exists is failed
+
+  - name: Set unicorn.rb
+    template: 
+      src: "roles/ap-unicorn/templates/unicorn.rb.j2"
+      dest: "/home/ubuntu/raisetech-app/config/unicorn.rb"
+      owner: ubuntu
+      group: ubuntu
+      mode: 0755
+
+    
+  - name: Set unicorn.rake
+    template: 
+      src: "roles/ap-unicorn/templates/unicorn.rake.j2"
+      dest: "/home/ubuntu/raisetech-app/lib/tasks/unicorn.rake"
+      owner: ubuntu
+      group: ubuntu
+      mode: 0755
+
+
+# ap-initで権限設定する (/home/ubuntu/raisetech-app/) 
+#  - name: setting directory tmp
+#    shell: bash -lc "sudo chown -R ubuntu:ubuntu /home/ubuntu/raisetech-app/tmp/"
+#    when: unicorn_exists is failed
+#
+#  - name: setting directory log
+#    shell: bash -lc "sudo chown -R ubuntu:ubuntu /home/ubuntu/raisetech-app/log/"
+#    when: unicorn_exists is failed
+
+
+    

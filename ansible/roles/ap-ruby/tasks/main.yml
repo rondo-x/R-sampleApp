@@ -1,0 +1,128 @@
+---
+  # ruby
+  # 参考: https://www.digitalocean.com/community/tutorials/how-to-install-ruby-on-rails-with-rbenv-on-ubuntu-20-04
+
+  - name: check rbenv install
+    shell: bash -lc "{{ rbenv_path }}/bin/rbenv --version"
+    register: rbenv_exists
+    changed_when: False
+    ignore_errors: True
+    
+
+  - name: Install ruby dependencies packages 
+    apt: 
+      name: "{{ ruby_depend }}"
+    vars: 
+      ruby_depend:
+        - libssl-dev
+        - libreadline-dev
+        - zlib1g-dev
+        - autoconf
+        - bison
+        - build-essential
+        - automake # imagemagic
+        - libltdl-dev #imagemagic
+        - libyaml-dev
+        - libreadline-dev
+        - libncurses5-dev
+        - libffi-dev
+        - libgdbm-dev
+    when: rbenv_exists is failed
+
+  - name: check ruby version
+    shell: bash -lc "rbenv versions | grep {{ ruby_version }}"
+    register: rbenv_check_install
+    changed_when: False
+    ignore_errors: True
+
+
+# rbenv
+  - name: install rbenv
+    git:
+      repo: "{{ rbenv_dl_url }}"
+      dest: "{{ rbenv_path }}"
+    when: rbenv_check_install is failed  
+
+  - name: 'rbenvのshファイルを配置'
+    template:
+      src: roles/ap-ruby/templates/rbenv_system.sh.j2
+      dest: /etc/profile.d/rbenv.sh
+      owner: ubuntu
+      group: ubuntu
+      mode: 0755
+    when: rbenv_check_install is failed  
+    
+  - name: source /etc/profile
+    shell: bash -lc "source /etc/profile"
+    when: rbenv_check_install is failed  
+
+  - name: install ruby-build
+    git: 
+      repo: "{{ ruby_build_dl_url }}"
+      dest: "{{ rbenv_path }}/plugins/ruby-build"
+    when: rbenv_check_install is failed  
+
+
+# ruby (対象verのrailsインストールのため、必要なruby verをインストール)
+  - name: install ruby 
+    shell: bash -lc "rbenv install -s {{ruby_version}}"
+    when: rbenv_check_install is failed  
+
+    
+  - name: set global ruby version 
+    shell: bash -lc "rbenv global {{ruby_version}} && rbenv rehash "
+    when: rbenv_check_install is failed  
+
+
+  - name: install rails 
+    gem:
+      name: "rails"
+      version: "{{ rails_version }}"
+      executable: "{{ rbenv_path }}/shims/gem"
+      user_install: no
+    environment:
+      RBENV_VERSION: "{{ ruby_version }}"
+
+  - name: install bundler 
+    gem:
+      name: "bundler"
+      version: "{{ bundler_version }}"
+      executable: "{{ rbenv_path }}/shims/gem"
+      user_install: no
+    environment:
+      RBENV_VERSION: "{{ ruby_version }}"
+
+#この記述では権限変更できなかったため削除 
+#  - name: change owner for rbenv
+#    file:
+#      path: "{{ rbenv_path }}"
+#      state: directory
+#      owner: ubuntu
+#      group: ubuntu
+
+  - name: change owner for rbenv 
+    become: yes
+    shell: bash -lc "sudo chown -R ubuntu:ubuntu {{ rbenv_path }}"
+
+
+
+
+#  - name: check ruby version
+#    shell: bash -lc "rbenv versions | grep {{ main_ruby_version }}"
+#    register: rbenv_check_install
+#    changed_when: False
+#    ignore_errors: True
+
+#  - name: install ruby 
+#    shell: bash -lc "rbenv install -s {{main_ruby_version}}"
+#    when: rbenv_check_install is failed  
+
+#  - name: check rbenv global
+#    shell: bash -lc "rbenv version | grep {{ main_ruby_version }}"
+#    register: rbenv_default
+#    changed_when: False
+#    ignore_errors: True
+    
+#  - name: set global ruby version 
+#    shell: bash -lc "rbenv global {{main_ruby_version}} && rbenv rehash "
+#    when: rbenv_default is failed

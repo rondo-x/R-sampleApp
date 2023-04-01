@@ -1,0 +1,17 @@
+---
+# yarnインストール
+  - name: check yarn install
+    shell: bash -lc "yarn -v"
+    register: yarn_exists
+    changed_when: False
+    ignore_errors: True
+
+  - name: install yarn
+    shell: bash -lc "npm install -g yarn"
+    when: yarn_exists is failed
+
+#    npm:
+#      name: yarn
+#      global: yes
+#      state: latest
+

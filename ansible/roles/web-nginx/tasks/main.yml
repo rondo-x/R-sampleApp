@@ -1,0 +1,61 @@
+---
+# 参考: http://nginx.org/en/linux_packages.html#Amazon-Linux
+
+  - name: check nginx install
+    shell: bash -lc "nginx -v"
+    register: nginx_exists
+    changed_when: False
+    ignore_errors: True
+
+  - name: Install the prerequisites (Amazon Linux2)
+    yum:
+      name: yum-utils
+      state: latest
+    when: nginx_exists is failed
+    
+  - name: Create Nginx repo 
+    template:
+      src: roles/web-nginx/templates/nginx.repo.j2
+      dest: /etc/yum.repos.d/nginx.repo
+    when: nginx_exists is failed
+    
+  - name: Install Nginx
+    become: yes
+    yum:
+      name: nginx
+    when: nginx_exists is failed
+
+  - name: Setup conf for Nginx
+    template:
+      src: roles/web-nginx/templates/nginx.conf.j2
+      dest: /etc/nginx/nginx.conf
+    when: nginx_exists is failed
+
+  - name: Setup conf for App 
+    template:
+      src: roles/web-nginx/templates/raisetech-app.conf.j2
+      dest: /etc/nginx/conf.d/raisetech-app.conf
+    when: nginx_exists is failed
+
+
+# default設定ファイルを別名で退避 
+  - name: copy default
+    become: yes
+    copy:
+      src: "/etc/nginx/conf.d/default.conf"
+      dest: "/etc/nginx/conf.d/default.conf.bak"
+      remote_src: yes
+    when: nginx_exists is failed
+
+  - name: delete default
+    become: yes
+    file:
+      path: "/etc/nginx/conf.d/default.conf"
+      state: absent
+    when: nginx_exists is failed
+
+
+  - name: restart nginx
+    service:
+      name: nginx
+      state: restarted

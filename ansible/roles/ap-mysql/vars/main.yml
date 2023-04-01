@@ -1,0 +1,2 @@
+mysql_dl_url: https://dev.mysql.com/get/mysql-apt-config_0.8.23-1_all.deb
+app_path: '/home/ubuntu/raisetech-app'
