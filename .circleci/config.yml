@@ -8,7 +8,7 @@ orbs:
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/configuration-reference/#jobs
 workflows:
-  deploy_infrastructure:
+  terraform_deploy_infrastructure:
     jobs:
       - terraform/fmt:
           checkout: true
@@ -51,9 +51,9 @@ workflows:
 # Orchestrate jobs using workflows
 # See: https://circleci.com/docs/configuration-reference/#workflows
 #workflows:
-#  deploy_infrastructure-workflow:
-#    jobs:
-#      - deploy_infrastructure
+#  R-SampleApp:
+#  jobs:
+#    - terraform_deploy_infrastructure
 
 
 
