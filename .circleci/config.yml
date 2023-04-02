@@ -22,13 +22,13 @@ workflows:
           checkout: true
           context: terraform
           persist-workspace: true
-	  path: terraform/stage
+          path: terraform/stage
           requires:
             - terraform/validate
       - terraform/apply:
           attach-workspace: true
           context: terraform
-	  path: terraform/stage
+          path: terraform/stage
           filters:
             branches:
               only: master
