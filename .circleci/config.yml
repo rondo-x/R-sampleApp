@@ -10,6 +10,7 @@ orbs:
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/configuration-reference/#jobs
 jobs:
+  # Terraform
   terraform_deploy_infrastructure:
     executor: terraform/default
     steps:
@@ -28,7 +29,7 @@ jobs:
           path: .
     working_directory: terraform/stage
 
-
+  # Ansible 
   execute-ansible:
     executor: ansible-playbook/default
     steps:
