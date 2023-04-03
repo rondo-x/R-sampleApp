@@ -35,13 +35,13 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints:
-            - "bf:61:7f:c1:b6:ae:0c:94:6e:d4:23:01:d0:ea:cd:ea" # AP Server
-            - "17:66:51:fd:09:91:ad:7f:64:77:79:ef:be:0e:42:27" # Web Server 
+            - KEY_FINGERPRINT_AP  # AP Server
+            - KEY_FINGERPRINT_WEB # Web Server 
       - ansible-playbook/install:
           version: 2.10.3
       - ansible-playbook/playbook:
           playbook: ansible/playbook.yml
-          playbook-options: "-u ec2-user -i ansible/inventory"
+          playbook-options: "-u ec2-user -i ansible/inventory --private-key ~/.ssh/config"
       
     
 
