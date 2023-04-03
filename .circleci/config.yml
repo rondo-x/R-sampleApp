@@ -27,7 +27,7 @@ jobs:
           path: terraform/stage
 #      - terraform/destroy:
 #          path: .
-    working_directory: terraform
+#    working_directory: terraform
 
   # Ansible 
   execute-ansible:
