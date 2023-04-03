@@ -9,33 +9,25 @@ orbs:
 
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/configuration-reference/#jobs
-workflows:
+jobs:
   terraform_deploy_infrastructure:
-    jobs:
-      - terraform/fmt:
-          checkout: true
-          context: terraform
+    executor: terraform/default
+    steps:
+      - checkout
+      - terraform/init:
+          path: .
       - terraform/validate:
-          checkout: true
-          context: terraform
-          requires:
-            - terraform/fmt
+          path: .
+      - terraform/fmt:
+          path: .
       - terraform/plan:
-          checkout: true
-          context: terraform
-          persist-workspace: true
-          path: terraform/stage
-          requires:
-            - terraform/validate
+          path: .
       - terraform/apply:
-          attach-workspace: true
-          context: terraform
-          path: terraform/stage
-          filters:
-            branches:
-              only: master
-          requires:
-            - terraform/plan
+          path: .
+      - terraform/destroy:
+          path: .
+    working_directory: terraform/stage
+
 
   execute-ansible:
     executor: ansible-playbook/default
@@ -50,8 +42,6 @@ workflows:
       - ansible-playbook/playbook:
           playbook: ansible/playbook.yml
           playbook-options: "-u ec2-user -i ansible/inventory"
-    requires:
-      - "terraform_deploy_infrastructure"
       
     
 
@@ -75,7 +65,13 @@ workflows:
 #  jobs:
 #    - terraform_deploy_infrastructure
 
-
+workflows:
+  R-SampleApp:
+    jobs:
+      - terraform_deploy_infrastructure
+      - execute-ansible:
+          requires:
+            - "terraform_deploy_infrastructure"
 
 #  say-hello-workflow:
 #    jobs:
