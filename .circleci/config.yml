@@ -22,12 +22,12 @@ jobs:
       - terraform/fmt:
           path: .
       - terraform/plan:
-          path: .
+          path: terraform/stage
       - terraform/apply:
-          path: .
-      - terraform/destroy:
-          path: .
-    working_directory: terraform/stage
+          path: terraform/stage
+#      - terraform/destroy:
+#          path: .
+    working_directory: terraform
 
   # Ansible 
   execute-ansible:
