@@ -34,16 +34,16 @@ jobs:
     executor: ansible-playbook/default
     steps:
       - checkout
-      - add_ssh_keys:
-          fingerprints:
-            - KEY_FINGERPRINT_AP  # AP Server
-            - KEY_FINGERPRINT_WEB # Web Server 
+#      - add_ssh_keys:
+#          fingerprints:
+#            - KEY_FINGERPRINT_AP  # AP Server
+#            - KEY_FINGERPRINT_WEB # Web Server 
       - ansible-playbook/install:
           version: 2.10.3
       - ansible-playbook/playbook:
           playbook: ansible/playbook.yml
-          playbook-options: "-u ec2-user -i ansible/inventory --private-key ~/.ssh/config"
-      
+#          playbook-options: "-u ec2-user -i ansible/inventory --private-key ~/.ssh/config"
+          playbook-options: "-i ansible/inventory"
     
 
 #  say-hello:
