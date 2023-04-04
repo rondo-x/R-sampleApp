@@ -1,15 +1,15 @@
 #Inventory hosts-file 
 [web-svr]
-13.231.130.4
+43.207.73.0
 
 [ap-svr]
-54.199.104.166
+13.114.16.254
 
 [web-svr:vars]
 ansible_user=ec2-user
-ansible_ssh_private_key_file=~/.ssh/aws-raisetech-ssh-key.pem
+ansible_ssh_private_key_file=KEY_FINGERPRINT_WEB
 
 [ap-svr:vars]
 ansible_user=ubuntu
-ansible_ssh_private_key_file=~/.ssh/aws-raisetech-splApp.pem
+ansible_ssh_private_key_file=KEY_FINGERPRINT_AP
 
