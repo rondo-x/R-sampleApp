@@ -1,0 +1,14 @@
+Host rt-web-svr
+  HostName 18.181.170.241
+  Port 22
+  User ec2-user
+  StrictHostKeyChecking no
+  IdentityFile KEY_FINGERPRINT_WEB
+
+Host rt-ap-svr
+  HostName 43.206.211.22
+  Port 22
+  User ubuntu
+  StrictHostKeyChecking no
+  IdentityFile KEY_FINGERPRINT_AP
+
