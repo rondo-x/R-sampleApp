@@ -46,19 +46,10 @@ jobs:
     
   # Serverspec
   execute-serverspec:
-  build:
     docker:
-      - image: cimg/base:stable
+      - image: cimg/ruby:2.7-node
     steps:
       - checkout
-      - ruby/install:
-          version: '2.6'
-      - run:
-          echo "Ruby 2.6 has been installed"
-      - ruby/install-deps:
-          bundler-version: 2.4.9
-#      - node/install-packages: 
-#          pkg-manager: yarn
       - run:
           name: bundle install
           command: |
@@ -69,6 +60,42 @@ jobs:
           command: |
             - cd serverspec
             - bundle exec rake spec
+
+
+
+#    build:
+#      docker:
+#        - image: cimg/ruby:2.6-node
+#      steps:
+#        - checkout
+#        - ruby/install:
+#            version: '2.6'
+#        - run:
+#            echo "Ruby 2.6 has been installed"
+#        - ruby/install-deps:
+#            bundler-version: 2.4.9
+#        - node/install-packages: 
+#            pkg-manager: yarn
+
+#    build:
+#      docker:
+#        - image: cimg/ruby:2.7-node # コンテナの種類参照URL   https://circleci.com/developer/ja/images/image/cimg/ruby
+
+#コンテナにbundler 2.4.10が収録済 
+#      steps: 
+#        - ruby/install-deps:
+#            bundler-version: 2.4.10
+
+#    test:
+#      docker:
+#        - image: cimg/ruby:2.7-node
+#      steps:
+#        - checkout
+
+#        - ruby/install-deps:
+#            bundler-version: 2.4.10
+
+
 
 
 #  say-hello:
