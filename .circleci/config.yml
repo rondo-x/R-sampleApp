@@ -10,40 +10,6 @@ orbs:
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/configuration-reference/#jobs
 jobs:
-  # Terraform
-  terraform_deploy_infrastructure:
-    executor: terraform/default
-    steps:
-      - checkout
-      - terraform/init:
-          path: .
-      - terraform/validate:
-          path: .
-      - terraform/fmt:
-          path: .
-      - terraform/plan:
-          path: terraform/stage
-      - terraform/apply:
-          path: terraform/stage
-#      - terraform/destroy:
-#          path: .
-#    working_directory: terraform
-
-  # Ansible 
-  execute-ansible:
-    executor: ansible-playbook/default
-    steps:
-      - checkout
-      - run:
-          name: Setup SSH
-          command: cp ssh/config ~/.ssh/
-      - ansible-playbook/install:
-          version: 2.10.3
-      - ansible-playbook/playbook:
-          playbook: ansible/playbook.yml
-#          playbook-options: "-u ec2-user -i ansible/inventory --private-key ~/.ssh/config"
-          playbook-options: "-i ansible/inventory"
-    
   # Serverspec
   execute-serverspec:
     docker:
@@ -122,10 +88,6 @@ jobs:
 workflows:
   R-SampleApp:
     jobs:
-      - terraform_deploy_infrastructure
-      - execute-ansible:
-          requires:
-            - "terraform_deploy_infrastructure"
       - execute-serverspec:
           requires:
             - "execute-ansible"
