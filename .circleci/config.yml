@@ -29,69 +29,10 @@ jobs:
             - bundle exec rake spec
 
 
-
-#    build:
-#      docker:
-#        - image: cimg/ruby:2.6-node
-#      steps:
-#        - checkout
-#        - ruby/install:
-#            version: '2.6'
-#        - run:
-#            echo "Ruby 2.6 has been installed"
-#        - ruby/install-deps:
-#            bundler-version: 2.4.9
-#        - node/install-packages: 
-#            pkg-manager: yarn
-
-#    build:
-#      docker:
-#        - image: cimg/ruby:2.7-node # コンテナの種類参照URL   https://circleci.com/developer/ja/images/image/cimg/ruby
-
-#コンテナにbundler 2.4.10が収録済 
-#      steps: 
-#        - ruby/install-deps:
-#            bundler-version: 2.4.10
-
-#    test:
-#      docker:
-#        - image: cimg/ruby:2.7-node
-#      steps:
-#        - checkout
-
-#        - ruby/install-deps:
-#            bundler-version: 2.4.10
-
-
-
-
-#  say-hello:
-#    # Specify the execution environment. You can specify an image from Docker Hub or use one of our convenience images from CircleCI's Developer Hub.
-#    # See: https://circleci.com/docs/configuration-reference/#executor-job
-#    docker:
-#      - image: cimg/base:stable
-#    # Add steps to the job
-#    # See: https://circleci.com/docs/configuration-reference/#steps
-#    steps:
-#      - checkout
-#      - run:
-#          name: "Say hello"
-#          command: "echo Hello, World!"
-
 # Orchestrate jobs using workflows
 # See: https://circleci.com/docs/configuration-reference/#workflows
-#workflows:
-#  R-SampleApp:
-#  jobs:
-#    - terraform_deploy_infrastructure
-
 workflows:
   R-SampleApp:
     jobs:
-      - execute-serverspec:
-          requires:
-            - "execute-ansible"
+      - execute-serverspec
 
-#  say-hello-workflow:
-#    jobs:
-#      - say-hello
