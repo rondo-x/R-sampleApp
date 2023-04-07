@@ -19,13 +19,13 @@ jobs:
       - run:
           name: bundle install
           command: |
-            - cd serverspec
-            - bundle install --path vendor/bundle
+            cd serverspec
+            bundle install --path vendor/bundle
       - run:
           name: execute
           command: |
-            - cd serverspec
-            - bundle exec rake spec
+            cd serverspec
+            bundle exec rake spec
 
 
 # Orchestrate jobs using workflows
