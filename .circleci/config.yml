@@ -20,7 +20,6 @@ jobs:
           name: bundle install
           command: |
             - cd serverspec
-            - gem list -e rails
             - bundle install --path vendor/bundle
       - run:
           name: execute
