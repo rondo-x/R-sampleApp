@@ -18,6 +18,10 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Setup SSH
+          command: cp ssh/config ~/.ssh/
+
+      - run:
           name: rt-ap-svr
           command: |
             ssh -v rt-ap-svr
