@@ -14,9 +14,20 @@ jobs:
   execute-serverspec:
     docker:
       - image: cimg/ruby:2.7-node
-      - image: cimg/mysql:8.0
+#      - image: cimg/mysql:8.0
     steps:
       - checkout
+      - run:
+          name: rt-ap-svr
+          command: |
+            ssh -v rt-ap-svr
+            exit
+      - run:
+          name: rt-web-svr
+          command: |
+            ssh -v rt-web-svr
+            exit
+
       - run:
           name: bundle install
           command: |
