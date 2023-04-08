@@ -7,6 +7,14 @@
     become: yes
     shell: bash -lc "sudo chown -R ubuntu:ubuntu /etc/nginx"
 
+  - name: Stop unicorn
+    become: no
+    shell: bash -lc "rails unicorn:stop"
+    args:
+      chdir: /home/ubuntu/raisetech-app
+    changed_when: False
+    ignore_errors: True
+
   - name: Start unicorn
     become: no
     shell: bash -lc "rails unicorn:start"
