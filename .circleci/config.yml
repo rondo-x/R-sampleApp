@@ -21,16 +21,16 @@ jobs:
           name: Setup SSH
           command: cp ssh/config ~/.ssh/
 
-      - run:
-          name: rt-ap-svr
-          command: |
-            ssh -v rt-ap-svr
-            exit
-      - run:
-          name: rt-web-svr
-          command: |
-            ssh -v rt-web-svr
-            exit
+#      - run:
+#          name: rt-ap-svr
+#          command: |
+#            ssh -v rt-ap-svr
+#            exit
+#      - run:
+#          name: rt-web-svr
+#          command: |
+#            ssh -v rt-web-svr
+#            exit
 
       - run:
           name: bundle install
