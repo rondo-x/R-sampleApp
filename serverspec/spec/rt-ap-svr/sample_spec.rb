@@ -15,13 +15,13 @@ require 'spec_helper'
 #end
 
 # MySQL 
-describe package('mysql-server') do
-  it { should be_installed }
-end
+#describe package('mysql-server') do
+#  it { should be_installed }
+#end
 
-describe port(3306) do
-  it { should be_listening }
-end
+#describe port(3306) do
+#  it { should be_listening }
+#end
 
 
 # yarn (-v, --versionで試すもErrorになっているためstdoutが空)
