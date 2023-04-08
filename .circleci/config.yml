@@ -10,44 +10,88 @@ orbs:
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/configuration-reference/#jobs
 jobs:
-  # Serverspec
-  execute-serverspec:
-    docker:
-      - image: cimg/ruby:2.7-node
-#      - image: cimg/mysql:8.0
+  # Terraform
+  terraform_deploy_infrastructure:
+    executor: terraform/default
+    steps:
+      - checkout
+      - terraform/init:
+          path: .
+      - terraform/validate:
+          path: .
+      - terraform/fmt:
+          path: .
+      - terraform/plan:
+          path: terraform/stage
+      - terraform/apply:
+          path: terraform/stage
+#      - terraform/destroy:
+#          path: .
+#    working_directory: terraform
+
+  # Ansible 
+  execute-ansible:
+    executor: ansible-playbook/default
     steps:
       - checkout
       - run:
           name: Setup SSH
           command: cp ssh/config ~/.ssh/
-
-#      - run:
-#          name: rt-ap-svr
-#          command: |
-#            ssh -v rt-ap-svr
-#            exit
-#      - run:
-#          name: rt-web-svr
-#          command: |
-#            ssh -v rt-web-svr
-#            exit
-
+      - ansible-playbook/install:
+          version: 2.10.3
+      - ansible-playbook/playbook:
+          playbook: ansible/playbook.yml
+#          playbook-options: "-u ec2-user -i ansible/inventory --private-key ~/.ssh/config"
+          playbook-options: "-i ansible/inventory"
+    
+  # Serverspec
+  execute-serverspec:
+    docker:
+      - image: cimg/ruby:2.7-node
+    steps:
+      - checkout
+      - run:
+          name: Setup SSH
+          command: cp ssh/config ~/.ssh/
       - run:
           name: bundle install
           command: |
-            cd serverspec
-            bundle install --path vendor/bundle
+            - cd serverspec
+            - gem list -e rails
+            - bundle install --path vendor/bundle
       - run:
           name: execute
           command: |
-            cd serverspec
-            bundle exec rake spec
+            - cd serverspec
+            - bundle exec rake spec
 
+#  say-hello:
+#    # Specify the execution environment. You can specify an image from Docker Hub or use one of our convenience images from CircleCI's Developer Hub.
+#    # See: https://circleci.com/docs/configuration-reference/#executor-job
+#    docker:
+#      - image: cimg/base:stable
+#    # Add steps to the job
+#    # See: https://circleci.com/docs/configuration-reference/#steps
+#    steps:
+#      - checkout
+#      - run:
+#          name: "Say hello"
+#          command: "echo Hello, World!"
 
 # Orchestrate jobs using workflows
 # See: https://circleci.com/docs/configuration-reference/#workflows
+
 workflows:
   R-SampleApp:
     jobs:
-      - execute-serverspec
+      - terraform_deploy_infrastructure
+      - execute-ansible:
+          requires:
+            - "terraform_deploy_infrastructure"
+      - execute-serverspec:
+          requires:
+            - "execute-ansible"
 
+#  say-hello-workflow:
+#    jobs:
+#      - say-hello
