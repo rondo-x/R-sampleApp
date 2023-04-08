@@ -56,14 +56,14 @@ jobs:
       - run:
           name: bundle install
           command: |
-            - cd serverspec
-            - gem list -e rails
-            - bundle install --path vendor/bundle
+            cd serverspec
+            gem list -e rails
+            bundle install --path vendor/bundle
       - run:
           name: execute
           command: |
-            - cd serverspec
-            - bundle exec rake spec
+            cd serverspec
+            bundle exec rake spec
 
 #  say-hello:
 #    # Specify the execution environment. You can specify an image from Docker Hub or use one of our convenience images from CircleCI's Developer Hub.
